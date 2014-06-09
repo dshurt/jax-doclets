@@ -1,6 +1,6 @@
 /*
     Copyright 2009-2011 Lunatech Research
-    Copyright 2009-2011 Stéphane Épardaud
+    Copyright 2009-2011 StÃ©phane Ã‰pardaud
     
     This file is part of jax-doclets.
 
@@ -19,18 +19,19 @@
  */
 package com.lunatech.doclets.jax.jpa.writers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jpa.model.JPAClass;
 import com.lunatech.doclets.jax.jpa.model.Registry;
 import com.sun.javadoc.Doc;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class SummaryWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
 
@@ -43,13 +44,13 @@ public class SummaryWriter extends com.lunatech.doclets.jax.writers.DocletWriter
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, "", "index.html", "");
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create("index.html"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     printHeader();
     printMenu("Overview");
     List<JPAClass> classes = new ArrayList<JPAClass>(registry.getJPAClasses());
@@ -58,7 +59,7 @@ public class SummaryWriter extends com.lunatech.doclets.jax.writers.DocletWriter
     tag("hr");
     printMenu("Overview");
     printFooter();
-    writer.flush();
+    //writer.flush();
     writer.close();
   }
 
@@ -74,12 +75,12 @@ public class SummaryWriter extends com.lunatech.doclets.jax.writers.DocletWriter
     for (JPAClass klass : classes) {
       open("tr");
       open("td");
-      around("a href='" + writer.relativePath + Utils.classToPath(klass) + "/" + klass.getShortClassName() + ".html'", klass.getName());
+      around("a href='" + writer.path + Utils.classToPath(klass) + "/" + klass.getShortClassName() + ".html'", klass.getName());
       close("td");
       open("td");
       Doc javaDoc = klass.getJavaDoc();
       if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-        writer.printSummaryComment(javaDoc);
+        writer.addSummaryComment(javaDoc, new ContentBuilder());
       close("td");
       close("tr");
 
@@ -95,12 +96,12 @@ public class SummaryWriter extends com.lunatech.doclets.jax.writers.DocletWriter
   @Override
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "index.html", selected);
+    printMenuItem("Overview", writer.path + "index.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }
 
   protected void printOtherMenuItems(String selected) {
-    printMenuItem("Graph", writer.relativePath + "graph.html", selected);
+    printMenuItem("Graph", writer.path + "graph.html", selected);
   }
 }

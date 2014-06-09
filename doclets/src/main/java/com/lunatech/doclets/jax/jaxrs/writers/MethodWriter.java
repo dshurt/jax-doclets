@@ -18,12 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxrs.writers;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.Utils.InvalidJaxTypeException;
 import com.lunatech.doclets.jax.Utils.JaxType;
@@ -40,7 +34,15 @@ import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.Tag;
 import com.sun.javadoc.Type;
-import com.sun.tools.doclets.formats.html.TagletOutputImpl;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import com.sun.tools.doclets.formats.html.markup.StringContent;
+import com.sun.tools.doclets.internal.toolkit.Content;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class MethodWriter extends DocletWriter {
 
@@ -62,7 +64,7 @@ public class MethodWriter extends DocletWriter {
     around("h3", httpMethod + " " + Utils.getAbsolutePath(this, resource));
     if (!Utils.isEmptyOrNull(method.getDoc())) {
       open("p");
-      writer.printInlineComment(method.getJavaDoc());
+      writer.addInlineComment(method.getJavaDoc(), new ContentBuilder());
       close("p");
     }
     printIncludes();
@@ -137,13 +139,19 @@ public class MethodWriter extends DocletWriter {
    */
   private void printTaglets(String tagletName) {
     MethodDoc javaDoc = method.getJavaDoc();
-    TagletOutputImpl output = new TagletOutputImpl("");
+    Content output = new ContentBuilder();
     Set<String> tagletsSet = new HashSet<String>();
     tagletsSet.add(tagletName);
     Utils.genTagOuput(configuration.parentConfiguration.tagletManager, javaDoc,
-                      configuration.parentConfiguration.tagletManager.getCustomTags(javaDoc), writer.getTagletWriterInstance(false),
+                      configuration.parentConfiguration.tagletManager.getCustomTaglets(javaDoc), writer.getTagletWriterInstance(false),
                       output, tagletsSet);
-    writer.print(output.toString());
+	  try
+	  {
+		  writer.write(new StringContent(output.toString()));
+	  } catch (IOException ex)
+	  {
+		  throw new RuntimeException(ex);
+	  }
   }
 
   private void printHTTPRequestHeaders() {
@@ -374,7 +382,7 @@ public class MethodWriter extends DocletWriter {
     if (tags != null && tags.length > 0) {
       open("span class='comment'");
       print("/* ");
-      writer.printSummaryComment(param.getParameterDoc(), tags);
+      writer.addSummaryComment(param.getParameterDoc(), tags, new ContentBuilder());
       print(" */");
       close("span");
     } else

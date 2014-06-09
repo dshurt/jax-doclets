@@ -4,6 +4,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 import com.sun.tools.doclets.formats.html.HtmlDoclet;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 
 public abstract class JAXDoclet<T extends JAXConfiguration> {
 
@@ -11,7 +12,7 @@ public abstract class JAXDoclet<T extends JAXConfiguration> {
 
   public final T conf;
 
-  public JAXDoclet(RootDoc rootDoc) {
+  public JAXDoclet(RootDoc rootDoc) throws Configuration.Fault {
     htmlDoclet.configuration.root = rootDoc;
     conf = makeConfiguration(htmlDoclet.configuration);
     conf.setOptions();

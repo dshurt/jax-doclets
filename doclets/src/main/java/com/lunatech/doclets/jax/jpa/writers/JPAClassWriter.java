@@ -1,6 +1,6 @@
 /*
     Copyright 2009-2011 Lunatech Research
-    Copyright 2009-2011 Stéphane Épardaud
+    Copyright 2009-2011 StÃ©phane Ã‰pardaud
     
     This file is part of jax-doclets.
 
@@ -19,9 +19,6 @@
  */
 package com.lunatech.doclets.jax.jpa.writers;
 
-import java.io.IOException;
-import java.util.Collection;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jpa.model.JPAClass;
@@ -30,6 +27,10 @@ import com.lunatech.doclets.jax.jpa.model.MemberType;
 import com.lunatech.doclets.jax.jpa.model.Relation;
 import com.sun.javadoc.Doc;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
+import java.util.Collection;
 
 public class JPAClassWriter extends DocletWriter {
 
@@ -39,14 +40,13 @@ public class JPAClassWriter extends DocletWriter {
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration, JPAClass jpaClass) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, Utils.classToPath(jpaClass), jpaClass.getShortClassName() + ".html",
-          Utils.classToRoot(jpaClass));
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create( jpaClass.getShortClassName() + ".html"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     printHeader();
     printMenu("");
     printSummary();
@@ -54,7 +54,7 @@ public class JPAClassWriter extends DocletWriter {
     tag("hr");
     printMenu("");
     printFooter();
-    writer.flush();
+   // writer.flush();
     writer.close();
   }
 
@@ -113,7 +113,7 @@ public class JPAClassWriter extends DocletWriter {
       open("td");
       Doc javaDoc = member.getJavaDoc();
       if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-        writer.printSummaryComment(javaDoc);
+        writer.addSummaryComment(javaDoc, new ContentBuilder());
       close("td");
       close("tr");
 
@@ -141,7 +141,7 @@ public class JPAClassWriter extends DocletWriter {
     close("h2");
     Doc javaDoc = jpaClass.getJavaDoc();
     if (javaDoc != null && javaDoc.tags() != null) {
-      writer.printInlineComment(javaDoc);
+      writer.addInlineComment(javaDoc, new ContentBuilder());
     }
     open("dl");
     JPAMember idMember = jpaClass.getID();
@@ -163,7 +163,7 @@ public class JPAClassWriter extends DocletWriter {
   @Override
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "index.html", selected);
+    printMenuItem("Overview", writer.path + "index.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }
@@ -181,7 +181,7 @@ public class JPAClassWriter extends DocletWriter {
   }
 
   protected void printOtherMenuItems(String selected) {
-    printMenuItem("Graph", writer.relativePath + "graph.html", selected);
+    printMenuItem("Graph", writer.path + "graph.html", selected);
   }
 
 }

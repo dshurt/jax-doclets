@@ -1,6 +1,7 @@
 package com.lunatech.doclets.jax;
 
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 
 public class JAXConfiguration {
 
@@ -10,7 +11,7 @@ public class JAXConfiguration {
     this.parentConfiguration = conf;
   }
 
-  public void setOptions() {
+  public void setOptions() throws Configuration.Fault {
     parentConfiguration.setOptions();
   }
 }

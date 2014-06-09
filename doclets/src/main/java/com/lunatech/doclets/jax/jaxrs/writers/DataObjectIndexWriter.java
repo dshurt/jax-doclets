@@ -18,30 +18,21 @@
  */
 package com.lunatech.doclets.jax.jaxrs.writers;
 
+import com.lunatech.doclets.jax.JAXConfiguration;
+import com.lunatech.doclets.jax.Utils;
+import com.lunatech.doclets.jax.jaxrs.JAXRSDoclet;
+import com.lunatech.doclets.jax.jaxrs.model.JAXRSApplication;
+import com.lunatech.doclets.jax.jaxrs.model.PojoTypes;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Type;
+import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-
-import com.lunatech.doclets.jax.JAXConfiguration;
-import com.lunatech.doclets.jax.Utils;
-import com.lunatech.doclets.jax.jaxb.model.JAXBClass;
-import com.lunatech.doclets.jax.jaxrs.JAXRSDoclet;
-import com.lunatech.doclets.jax.jaxrs.model.JAXRSApplication;
-import com.lunatech.doclets.jax.jaxrs.model.PojoTypes;
-import com.lunatech.doclets.jax.jaxrs.model.Resource;
-import com.lunatech.doclets.jax.jaxrs.model.ResourceMethod;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.Type;
-import com.sun.javadoc.TypeVariable;
-import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
-import com.sun.tools.doclets.internal.toolkit.util.DirectoryManager;
 
 public class DataObjectIndexWriter extends DocletWriter {
 
@@ -60,7 +51,7 @@ public class DataObjectIndexWriter extends DocletWriter {
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     printPrelude("Data object index", "Data objects");
 
     Comparator<Type> typeSimpleNameComparator = new Comparator<Type>() {
@@ -83,7 +74,7 @@ public class DataObjectIndexWriter extends DocletWriter {
 
     tag("hr");
     printPostlude("Data objects");
-    writer.flush();
+   // writer.flush();
     writer.close();
   }
 
@@ -102,12 +93,12 @@ public class DataObjectIndexWriter extends DocletWriter {
       open("tr");
       open("td");
       if (cDoc != null) {
-        around("a title='" + cDoc.qualifiedTypeName() + "' + href='" + writer.relativePath + getLink(cDoc) + "'", cDoc.simpleTypeName());
+        around("a title='" + cDoc.qualifiedTypeName() + "' + href='" + writer.path + getLink(cDoc) + "'", cDoc.simpleTypeName());
         ClassDoc superClass = cDoc.superclass();
         if (pojoTypes.getResolvedTypes().contains(superClass)) {
           open("span class='typedetail'");
           print(" extends ");
-          around("a title='" + superClass.qualifiedTypeName() + "' href='" + writer.relativePath + getLink(superClass) + "'",
+          around("a title='" + superClass.qualifiedTypeName() + "' href='" + writer.path + getLink(superClass) + "'",
               superClass.simpleTypeName());
           close("span");
         } else if (cDoc.isEnum()) {
@@ -122,7 +113,7 @@ public class DataObjectIndexWriter extends DocletWriter {
       close("td");
       open("td");
       if (cDoc != null) { // && cDoc.firstSentenceTags() != null
-      	writer.printSummaryComment(cDoc);
+      	writer.addSummaryComment(cDoc, new ContentBuilder());
       }
       close("td");
       close("tr");

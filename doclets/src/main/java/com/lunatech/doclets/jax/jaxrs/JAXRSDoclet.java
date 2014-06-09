@@ -18,9 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxrs;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.lunatech.doclets.jax.JAXDoclet;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxrs.model.JAXRSApplication;
@@ -45,7 +42,13 @@ import com.sun.javadoc.SourcePosition;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 import com.sun.tools.doclets.formats.html.HtmlDoclet;
 import com.sun.tools.doclets.internal.toolkit.AbstractDoclet;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 import com.sun.tools.doclets.internal.toolkit.taglets.LegacyTaglet;
+import com.sun.tools.doclets.internal.toolkit.taglets.TagletManager;
+import com.sun.tools.doclets.internal.toolkit.util.MessageRetriever;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class JAXRSDoclet extends JAXDoclet<JAXRSConfiguration> {
 
@@ -86,28 +89,50 @@ public class JAXRSDoclet extends JAXDoclet<JAXRSConfiguration> {
     return AbstractDoclet.languageVersion();
   }
 
-  public static boolean start(final RootDoc rootDoc) {
+  public static boolean start(final RootDoc rootDoc) throws Configuration.Fault, IOException {
     new JAXRSDoclet(rootDoc).start();
     return true;
   }
 
-  public JAXRSDoclet(RootDoc rootDoc) {
-    super(rootDoc);
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new ResponseHeaderTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new RequestHeaderTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new HTTPTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new ReturnWrappedTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new InputWrappedTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new LegacyTaglet(new IncludeTaglet()));
-    htmlDoclet.configuration.tagletManager.addCustomTag(new ExcludeTaglet());
+  public JAXRSDoclet(RootDoc rootDoc) throws Configuration.Fault {
+    super(rootDoc);	
+   	
+	
+
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new ResponseHeaderTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new RequestHeaderTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new HTTPTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new ReturnWrappedTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new InputWrappedTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new LegacyTaglet(new IncludeTaglet()));
+//    htmlDoclet.configuration().tagletManager.addCustomTag(new ExcludeTaglet());
+//
+//	  System.out.println("doclet tag: " + htmlDoclet.configuration().tagletManager); 
+
+     //htmlDoclet.configuration().tagletManager.addNewSimpleCustomTag("HTTP", "HTTP", "<h2>");
+//	
+//    System.out.println(Arrays.toString(htmlDoclet.configuration().tagletManager.getCustomTagNames().toArray()));
+	
   }
 
-  @Override
-  protected JAXRSConfiguration makeConfiguration(ConfigurationImpl configuration) {
-    return new JAXRSConfiguration(configuration);
-  }
+	@Override
+	protected JAXRSConfiguration makeConfiguration(ConfigurationImpl configuration)
+	{
+		JAXRSConfiguration config = new JAXRSConfiguration(configuration);
+		MessageRetriever messageRetriever = new JAXRSMessageReceiver(configuration, new JAXRSResource());		
+		config.parentConfiguration.tagletManager = new TagletManager(true, true, true, true, messageRetriever);
 
-  public void start() {
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new ResponseHeaderTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new RequestHeaderTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new HTTPTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new ReturnWrappedTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new InputWrappedTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new LegacyTaglet(new IncludeTaglet()));
+		config.parentConfiguration.tagletManager.addCustomTag(new ExcludeTaglet());
+		return config;
+	}
+
+  public void start() throws IOException {
     JAXRSApplication app = new JAXRSApplication(conf);
     Resource rootResource = app.getRootResource();
 

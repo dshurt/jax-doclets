@@ -1,15 +1,7 @@
 package com.lunatech.doclets.jax.jaxb;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.junit.Test;
-
 import com.lunatech.doclets.jax.jaxb.testcase.ClassExample;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Options;
@@ -17,13 +9,20 @@ import com.sun.tools.javadoc.JavadocTool;
 import com.sun.tools.javadoc.Messager;
 import com.sun.tools.javadoc.ModifierFilter;
 import com.sun.tools.javadoc.RootDocImpl;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.junit.Test;
 
 public class JAXBDocletTest {
 
   private static final Logger logger = Logger.getLogger(JAXBDocletTest.class.getName());
 
   @Test
-  public void testStart() throws IOException {
+  public void testStart() throws IOException, Configuration.Fault {
     Context context = new Context();
     Options compOpts = Options.instance(context);
     compOpts.put("-sourcepath", "src/test/java");
@@ -37,8 +36,8 @@ public class JAXBDocletTest {
     ListBuffer<String> packageNames = new ListBuffer<String>();
     ListBuffer<String> excludedPackages = new ListBuffer<String>();
 
-    RootDocImpl rootDocImpl = javadocTool.getRootDocImpl("en", "", new ModifierFilter(ModifierFilter.ALL_ACCESS), javaNames.toList(),
-                                                         options.toList(), false, packageNames.toList(), excludedPackages.toList(), false,
+    RootDocImpl rootDocImpl = javadocTool.getRootDocImpl("en", "", new ModifierFilter(ModifierFilter.ALL_ACCESS), javaNames.toList(), 
+                                                         options.toList(), null,false, packageNames.toList(), excludedPackages.toList(), false,
                                                          false, false);
     logger.info(rootDocImpl.getRawCommentText());
     JAXBDoclet.start(rootDocImpl);

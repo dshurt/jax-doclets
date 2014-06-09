@@ -18,11 +18,6 @@
  */
 package com.lunatech.doclets.jax;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.lunatech.doclets.jax.jaxb.model.JAXBClass;
 import com.lunatech.doclets.jax.jaxrs.model.Resource;
 import com.lunatech.doclets.jax.jaxrs.model.ResourceMethod;
@@ -44,13 +39,30 @@ import com.sun.javadoc.Tag;
 import com.sun.javadoc.Type;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
 import com.sun.tools.doclets.internal.toolkit.Configuration;
+import com.sun.tools.doclets.internal.toolkit.Content;
 import com.sun.tools.doclets.internal.toolkit.taglets.DeprecatedTaglet;
 import com.sun.tools.doclets.internal.toolkit.taglets.ParamTaglet;
 import com.sun.tools.doclets.internal.toolkit.taglets.Taglet;
 import com.sun.tools.doclets.internal.toolkit.taglets.TagletManager;
-import com.sun.tools.doclets.internal.toolkit.taglets.TagletOutput;
 import com.sun.tools.doclets.internal.toolkit.taglets.TagletWriter;
-import com.sun.tools.doclets.internal.toolkit.util.DirectoryManager;
+import com.sun.tools.doclets.internal.toolkit.util.DocLink;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class Utils {
 
@@ -347,15 +359,15 @@ public class Utils {
   }
 
   public static String classToPath(JAXBClass jaxbClass) {
-    return DirectoryManager.getPath(jaxbClass.getPackageName());
+    return DocPath.create(jaxbClass.getPackageName()).getPath();
   }
 
   public static String classToPath(JPAClass jpaClass) {
-    return DirectoryManager.getPath(jpaClass.getPackageName());
+    return DocPath.create(jpaClass.getPackageName()).getPath();
   }
 
   public static String classToPath(ClassDoc cDoc) {
-    return DirectoryManager.getPath(cDoc.containingPackage().name());
+    return DocPath.create(cDoc.containingPackage().name()).getPath();
   }
 
   public static String urlToPath(Resource resource) {
@@ -385,19 +397,19 @@ public class Utils {
   }
 
   public static String urlToType(ClassDoc klass) {
-    return DirectoryManager.getPathToClass(klass);
+    return DocPath.forClass(klass).getPath();
   }
 
   public static String classToRoot(JAXBClass klass) {
-    return DirectoryManager.getRelativePath(klass.getPackageName());
+    return DocPath.create(klass.getPackageName()).getPath();
   }
 
   public static String classToRoot(ClassDoc cDoc) {
-  	return DirectoryManager.getRelativePath(cDoc.containingPackage());
+  	return DocPath.forPackage(cDoc.containingPackage()).getPath();
   }
 
   public static String classToRoot(JPAClass klass) {
-    return DirectoryManager.getRelativePath(klass.getPackageName());
+    return DocPath.create(klass.getPackageName()).getPath();
   }
 
   public static String urlToRoot(Resource resource) {
@@ -432,11 +444,11 @@ public class Utils {
     }
   }
 
-  public static void genTagOuput(TagletManager tagletManager, Doc doc, Taglet[] taglets, TagletWriter writer, TagletOutput output,
+  public static void genTagOuput(TagletManager tagletManager, Doc doc, Taglet[] taglets, TagletWriter writer, Content output,
                                  Set<String> tagletsToPrint) {
     tagletManager.checkTags(doc, doc.tags(), false);
-    tagletManager.checkTags(doc, doc.inlineTags(), true);
-    TagletOutput currentOutput = null;
+    tagletManager.checkTags(doc, doc.inlineTags(), true);	
+    Content currentOutput = null;
     for (int i = 0; i < taglets.length; i++) {
       if (!tagletsToPrint.contains(taglets[i].getName()))
         continue;
@@ -463,7 +475,7 @@ public class Utils {
       }
       if (currentOutput != null) {
         tagletManager.seenCustomTag(taglets[i].getName());
-        output.appendOutput(currentOutput);
+        output.addContent(currentOutput);
       }
     }
   }
@@ -584,8 +596,9 @@ public class Utils {
   }
 
   private static String getExternalLink(Configuration configuration, String packageName, String className, HtmlDocletWriter writer) {
-    return configuration.extern.getExternalLink(packageName, writer.relativePath, className + ".html");
-  }
+		DocLink value = configuration.extern.getExternalLink(packageName, writer.path, className + ".html");
+		return value == null ? null :  value.toString();
+	}
 
   public static String getLinkTypeName(String url) {
     int lastSep = url.lastIndexOf('/');

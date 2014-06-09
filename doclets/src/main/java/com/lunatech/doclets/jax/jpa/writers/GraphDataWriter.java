@@ -1,6 +1,6 @@
 /*
     Copyright 2009-2011 Lunatech Research
-    Copyright 2009-2011 StÃ©phane Ã‰pardaud
+    Copyright 2009-2011 Stéphane Épardaud
     
     This file is part of jax-doclets.
 
@@ -19,14 +19,14 @@
  */
 package com.lunatech.doclets.jax.jpa.writers;
 
-import java.io.IOException;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jpa.model.JPAClass;
 import com.lunatech.doclets.jax.jpa.model.Registry;
 import com.lunatech.doclets.jax.jpa.model.Relation;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
 
 public class GraphDataWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
 
@@ -39,20 +39,20 @@ public class GraphDataWriter extends com.lunatech.doclets.jax.writers.DocletWrit
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, "", "graph-data.js", "");
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create("graph-data.js"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     print("var json = [\n");
     boolean doComma = false;
     for (JPAClass klass : registry.getJPAClasses()) {
       if (doComma)
         print(" ,\n");
       doComma = true;
-      String url = writer.relativePath + Utils.classToPath(klass) + "/" + klass.getShortClassName() + ".html";
+      String url = writer.path + Utils.classToPath(klass) + "/" + klass.getShortClassName() + ".html";
       print(" {\n");
       print("  name: '" + klass.getName() + "',\n");
       print("  id: '" + klass.getName() + "',\n");
@@ -79,7 +79,7 @@ public class GraphDataWriter extends com.lunatech.doclets.jax.writers.DocletWrit
       print(" }\n");
     }
     print("];\n");
-    writer.flush();
+  //  writer.flush();
     writer.close();
   }
 }

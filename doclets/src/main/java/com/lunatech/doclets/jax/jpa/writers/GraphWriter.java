@@ -19,11 +19,11 @@
  */
 package com.lunatech.doclets.jax.jpa.writers;
 
-import java.io.IOException;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.jpa.model.Registry;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
 
 public class GraphWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
 
@@ -33,7 +33,7 @@ public class GraphWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, "", "graph.html", "");
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create("graph.html"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -45,7 +45,7 @@ public class GraphWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
     print("<script type='text/javascript' src='graph-data.js'></script>\n");
   }
 
-  public void write() {
+  public void write() throws IOException {
     printHeader("Graph");
     printMenu("Graph");
     print("<div id='graph'></div>");
@@ -53,20 +53,20 @@ public class GraphWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
     tag("hr");
     printMenu("Overview");
     printFooter();
-    writer.flush();
+   // writer.flush();
     writer.close();
   }
 
   @Override
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "index.html", selected);
+    printMenuItem("Overview", writer.path + "index.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }
 
   protected void printOtherMenuItems(String selected) {
-    printMenuItem("Graph", writer.relativePath + "graph.html", selected);
+    printMenuItem("Graph", writer.path + "graph.html", selected);
   }
 
 }

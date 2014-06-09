@@ -18,10 +18,9 @@
  */
 package com.lunatech.doclets.jax.jaxrs.tags;
 
-import java.util.Map;
-
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
+import java.util.Map;
 
 public class ReturnWrappedTaglet implements Taglet {
 

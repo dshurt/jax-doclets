@@ -1,7 +1,6 @@
 package com.lunatech.doclets.jax.test;
 
 import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -25,7 +24,7 @@ public class WrappedTest {
 
   /**
    * 
-   * @returnWrapped List<Foo<Integer,Object>> the list
+   * @return 
    */
   @Path("wrapped")
   @GET

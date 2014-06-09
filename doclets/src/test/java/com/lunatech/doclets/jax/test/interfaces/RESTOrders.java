@@ -18,6 +18,12 @@
  */
 package com.lunatech.doclets.jax.test.interfaces;
 
+import com.lunatech.doclets.jax.test.LamaSubResource;
+import com.lunatech.doclets.jax.test.RESTOrdersBean.Comment;
+import com.lunatech.doclets.jax.test.RESTOrdersBean.Order;
+import com.lunatech.doclets.jax.test.RESTOrdersBean.OrderLine;
+import com.lunatech.doclets.jax.test.RESTOrdersBean.OrderStatus;
+import com.lunatech.doclets.jax.test.RESTOrdersBean.ResourceLink;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -32,18 +38,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.lunatech.doclets.jax.test.LamaSubResource;
-import com.lunatech.doclets.jax.test.RESTOrdersBean.Comment;
-import com.lunatech.doclets.jax.test.RESTOrdersBean.Order;
-import com.lunatech.doclets.jax.test.RESTOrdersBean.OrderLine;
-import com.lunatech.doclets.jax.test.RESTOrdersBean.OrderStatus;
-import com.lunatech.doclets.jax.test.RESTOrdersBean.ResourceLink;
-
 /**
- * RESTful base resource class to obtain a list of {@Link Order} keys,
- * reading or updating/creating an {@Link Order}, its {@Link
- * Comment}s, {@Link OrderLine}s, {@Link Status}es and {@Link
- *  Consignments}s.
+ * RESTful base resource class to obtain a list of 
  * 
  * @author stephane
  */

@@ -45,6 +45,7 @@ import com.sun.javadoc.Doc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import java.io.IOException;
 
 public class JAXBClass implements Comparable<JAXBClass> {
 
@@ -243,7 +244,13 @@ public class JAXBClass implements Comparable<JAXBClass> {
   }
 
   public void write(JAXConfiguration configuration) {
-    new JAXBClassWriter(configuration, this).write();
+	  try
+	  {
+		  new JAXBClassWriter(configuration, this).write();
+	  } catch (IOException ex)
+	  {
+		  throw new RuntimeException(ex);
+	  }
   }
 
   public Doc getJavaDoc() {

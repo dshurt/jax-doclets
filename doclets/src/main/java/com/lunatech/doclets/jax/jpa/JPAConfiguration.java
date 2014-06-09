@@ -21,6 +21,7 @@ package com.lunatech.doclets.jax.jpa;
 
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 
 public class JPAConfiguration extends JAXConfiguration {
 
@@ -28,7 +29,7 @@ public class JPAConfiguration extends JAXConfiguration {
     super(conf);
   }
 
-  public void setOptions() {
+  public void setOptions() throws Configuration.Fault {
     super.setOptions();
   }
 }

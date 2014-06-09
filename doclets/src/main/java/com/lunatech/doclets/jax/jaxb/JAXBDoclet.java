@@ -18,13 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxb;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.lunatech.doclets.jax.JAXDoclet;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxb.model.JAXBClass;
@@ -40,6 +33,13 @@ import com.sun.javadoc.Type;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 import com.sun.tools.doclets.formats.html.HtmlDoclet;
 import com.sun.tools.doclets.internal.toolkit.AbstractDoclet;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.xml.bind.annotation.XmlRootElement;
 
 public class JAXBDoclet extends JAXDoclet<JAXBConfiguration> {
 
@@ -91,7 +91,7 @@ public class JAXBDoclet extends JAXDoclet<JAXBConfiguration> {
 
   private Registry registry = new Registry();
 
-  public JAXBDoclet(RootDoc rootDoc) {
+  public JAXBDoclet(RootDoc rootDoc) throws Configuration.Fault {
     super(rootDoc);
   }
 
@@ -100,12 +100,12 @@ public class JAXBDoclet extends JAXDoclet<JAXBConfiguration> {
     return new JAXBConfiguration(configuration);
   }
 
-  public static boolean start(final RootDoc rootDoc) {
+  public static boolean start(final RootDoc rootDoc) throws Configuration.Fault, IOException {
     new JAXBDoclet(rootDoc).start();
     return true;
   }
 
-  private void start() {
+  private void start() throws IOException {
     final ClassDoc[] classes = conf.parentConfiguration.root.classes();
     for (final ClassDoc klass : classes) {
       if (Utils.findAnnotatedClass(klass, jaxbAnnotations) != null) {

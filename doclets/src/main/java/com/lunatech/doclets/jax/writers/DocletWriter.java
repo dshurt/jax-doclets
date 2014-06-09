@@ -24,6 +24,11 @@ import com.sun.javadoc.Doc;
 import com.sun.javadoc.SeeTag;
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import com.sun.tools.doclets.formats.html.markup.StringContent;
+import com.sun.tools.doclets.internal.toolkit.Content;
+import java.io.IOException;
+
 
 public class DocletWriter {
 
@@ -83,7 +88,7 @@ public class DocletWriter {
     open("HTML");
     open("HEAD");
     around("TITLE", title);
-    tag("LINK REL='stylesheet' TYPE='text/css' HREF='" + writer.relativePath + "doclet.css' TITLE='Style'");
+    tag("LINK REL='stylesheet' TYPE='text/css' HREF='" + writer.path + "doclet.css' TITLE='Style'");
     String charset = configuration.parentConfiguration.charset;
     if (Utils.isEmptyOrNull(charset))
       charset = "UTF-8";
@@ -134,7 +139,7 @@ public class DocletWriter {
 
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "overview-summary.html", selected);
+    printMenuItem("Overview", writer.path + "overview-summary.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }
@@ -156,11 +161,18 @@ public class DocletWriter {
   }
 
   protected void print(String str) {
-    writer.write(str);
+    Content content = new StringContent(str);
+	  try
+	  {
+		  writer.write(content);
+	  } catch (IOException ex)
+	  {
+		throw new RuntimeException(ex);
+	  }
   }
 
   protected String escape(String str) {
-    return str.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    return str.replace("&", "&amp;"); //.replace("<", "&lt;").replace(">", "&gt;");
   }
 
   protected void printSeeAlso(Doc javaDoc) {
@@ -169,13 +181,14 @@ public class DocletWriter {
       open("dl class='seealso'");
       around("dt", "See Also:");
       open("dd");
-      for (int i = 0; i < seeTags.length; i++) {
-        SeeTag seeTag = seeTags[i];
-        writer.printSummaryComment(javaDoc, new SeeTag[] { seeTag });
-        if (i < (seeTags.length - 1)) {
-          writer.write(", ");
-        }
-      }
+//      for (int i = 0; i < seeTags.length; i++) {
+//        SeeTag seeTag = seeTags[i];
+//        writer.printSummaryComment(javaDoc, new SeeTag[] { seeTag });
+//        if (i < (seeTags.length - 1)) {
+//          print(", ");
+//        }
+//      }
+      writer.addSummaryComment(javaDoc, seeTags, new ContentBuilder());
       close("dd", "dl");
     }
   }
@@ -186,7 +199,7 @@ public class DocletWriter {
       open("dl class='since'");
       around("dt", "Since:");
       open("dd");
-      writer.write(sinceTags[0].text());
+      print(sinceTags[0].text());
       close("dd", "dl");
     }
   }

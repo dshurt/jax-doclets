@@ -18,13 +18,12 @@
  */
 package com.lunatech.doclets.jax.jaxrs.tags;
 
-import java.util.Map;
-
 import com.sun.javadoc.Doc;
 import com.sun.javadoc.Tag;
+import com.sun.tools.doclets.internal.toolkit.Content;
 import com.sun.tools.doclets.internal.toolkit.taglets.Taglet;
-import com.sun.tools.doclets.internal.toolkit.taglets.TagletOutput;
 import com.sun.tools.doclets.internal.toolkit.taglets.TagletWriter;
+import java.util.Map;
 
 public class ExcludeTaglet implements Taglet {
 
@@ -84,7 +83,7 @@ public class ExcludeTaglet implements Taglet {
    * Exclude tag does not support output.
    */
   @Override
-  public TagletOutput getTagletOutput(Tag tag, TagletWriter writer) throws IllegalArgumentException {
+  public Content getTagletOutput(Tag tag, TagletWriter writer) throws IllegalArgumentException {
     throw new IllegalArgumentException();
   }
 
@@ -92,7 +91,7 @@ public class ExcludeTaglet implements Taglet {
    * Exclude tag does not support output.
    */
   @Override
-  public TagletOutput getTagletOutput(Doc doc, TagletWriter writer) throws IllegalArgumentException {
+  public Content getTagletOutput(Doc doc, TagletWriter writer) throws IllegalArgumentException {
     throw new IllegalArgumentException();
   }
 

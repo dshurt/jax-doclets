@@ -3,7 +3,7 @@ package com.lunatech.doclets.jax.jaxb;
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
-
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 import java.util.regex.Pattern;
 
 public class JAXBConfiguration extends JAXConfiguration {
@@ -25,7 +25,8 @@ public class JAXBConfiguration extends JAXConfiguration {
     super(conf);
   }
 
-  public void setOptions() {
+  @Override
+  public void setOptions() throws Configuration.Fault {
     super.setOptions();
     String[][] options = parentConfiguration.root.options();
     String pattern = Utils.getOption(options, "-matchingjaxbnamesonly");
@@ -37,15 +38,15 @@ public class JAXBConfiguration extends JAXConfiguration {
     enableJSONExample = !Utils.hasOption(options, "-disablejsonexample");
     enableXMLExample = !Utils.hasOption(options, "-disablexmlexample");
     
-    String jsonConvention = Utils.getOption(options, "-jsonconvention");
-    if(jsonConvention == null || "jettison".equals(jsonConvention))
+    String jsonConventionLocal = Utils.getOption(options, "-jsonconvention");
+    if(jsonConventionLocal == null || "jettison".equals(jsonConventionLocal))
       this.jsonConvention = JSONConvention.JETTISON_MAPPED;
-    else if("badgerfish".equals(jsonConvention))
+    else if("badgerfish".equals(jsonConventionLocal))
       this.jsonConvention = JSONConvention.BADGERFISH;
-    else if("mapped".equals(jsonConvention))
+    else if("mapped".equals(jsonConventionLocal))
       this.jsonConvention = JSONConvention.MAPPED;
     else{
-      parentConfiguration.root.printError("Unknown JSON convention: "+jsonConvention+" (must be one of 'jettison' (default), 'badgerfish', 'mapped')");
+      parentConfiguration.root.printError("Unknown JSON convention: "+jsonConventionLocal+" (must be one of 'jettison' (default), 'badgerfish', 'mapped')");
     }
   }
 }

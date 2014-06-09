@@ -18,11 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxrs.writers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxrs.JAXRSDoclet;
@@ -36,10 +31,13 @@ import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MemberDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ParameterizedType;
-import com.sun.javadoc.SeeTag;
-import com.sun.javadoc.Tag;
 import com.sun.javadoc.Type;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PojoClassWriter extends DocletWriter {
 
@@ -68,7 +66,7 @@ public class PojoClassWriter extends DocletWriter {
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     final String objectType;
     if (cDoc.isEnum()) {
       objectType = "Enumeration";
@@ -80,7 +78,7 @@ public class PojoClassWriter extends DocletWriter {
     printElements();
     tag("hr");
     printPostlude("");
-    writer.flush();
+    //writer.flush();
     writer.close();
   }
 
@@ -132,7 +130,7 @@ public class PojoClassWriter extends DocletWriter {
 
     Doc javaDoc = cDoc;
     if (javaDoc.tags() != null) {
-      writer.printInlineComment(javaDoc);
+      writer.addInlineComment(javaDoc, new ContentBuilder());
     }
     // @since
     printSince(javaDoc);
@@ -210,7 +208,7 @@ public class PojoClassWriter extends DocletWriter {
       open("td");
       Doc javaDoc = enumConst;
       if (!Utils.isEmptyOrNull(javaDoc.commentText())) {
-        writer.printInlineComment(javaDoc);
+        writer.addInlineComment(javaDoc, new ContentBuilder());
       }
       close("td");
       close("tr");
@@ -242,7 +240,7 @@ public class PojoClassWriter extends DocletWriter {
       open("td");
       Doc javaDoc = member.getMemberDoc();
       if (!Utils.isEmptyOrNull(javaDoc.commentText())) {
-        writer.printInlineComment(javaDoc);
+        writer.addInlineComment(javaDoc, new ContentBuilder());
       }
       close("td");
       close("tr");

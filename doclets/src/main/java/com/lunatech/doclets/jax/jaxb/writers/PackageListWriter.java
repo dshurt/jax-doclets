@@ -18,14 +18,14 @@
  */
 package com.lunatech.doclets.jax.jaxb.writers;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.jaxb.model.JAXBClass;
 import com.lunatech.doclets.jax.jaxb.model.Registry;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PackageListWriter extends com.lunatech.doclets.jax.writers.DocletWriter {
 
@@ -38,27 +38,31 @@ public class PackageListWriter extends com.lunatech.doclets.jax.writers.DocletWr
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, "", "package-list", "");
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create("package-list"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void write() {
-    Set<String> packages = new HashSet<String>();
-    for (JAXBClass klass : registry.getJAXBClasses()) {
-      packages.add(klass.getPackageName());
-    }
-    for (String packageName : packages)
-      print(packageName + "\n");
-    writer.flush();
-    writer.close();
-  }
+	public void write() throws IOException
+	{
+		Set<String> packages = new HashSet<String>();
+		for (JAXBClass klass : registry.getJAXBClasses())
+		{
+			packages.add(klass.getPackageName());
+		}
+		for (String packageName : packages)
+		{
+			print(packageName + "\n");
+		}
+		//writer.flush();
+		writer.close();
+	}
 
   @Override
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "index.html", selected);
+    printMenuItem("Overview", writer.path + "index.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }

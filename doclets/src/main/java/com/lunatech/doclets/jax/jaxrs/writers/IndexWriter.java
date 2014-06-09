@@ -18,8 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxrs.writers;
 
-import java.io.IOException;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxrs.JAXRSDoclet;
@@ -28,6 +26,8 @@ import com.lunatech.doclets.jax.jaxrs.model.Resource;
 import com.lunatech.doclets.jax.jaxrs.model.ResourceMethod;
 import com.sun.javadoc.Doc;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import java.io.IOException;
 
 public class IndexWriter extends DocletWriter {
 
@@ -43,12 +43,12 @@ public class IndexWriter extends DocletWriter {
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     printPrelude("Resource index", "Index");
     printResources();
     tag("hr");
     printPostlude("Index");
-    writer.flush();
+    //writer.flush();
     writer.close();
   }
 
@@ -101,7 +101,7 @@ public class IndexWriter extends DocletWriter {
     open("td");
     Doc javaDoc = method.getJavaDoc();
     if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-      writer.printSummaryComment(javaDoc);
+      writer.addSummaryComment(javaDoc, new ContentBuilder());
     close("td");
     close("tr");
   }

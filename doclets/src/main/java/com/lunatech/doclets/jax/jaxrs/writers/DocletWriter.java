@@ -50,11 +50,11 @@ public class DocletWriter extends com.lunatech.doclets.jax.writers.DocletWriter 
   }
 
   protected void printOtherMenuItems(String selected) {
-    printMenuItem("Index", writer.relativePath + "overview-index.html", selected);
+    printMenuItem("Index", writer.path + "overview-index.html", selected);
     if (getJAXRSConfiguration().enablePojoJsonDataObjects) {
-    	printMenuItem("Data objects", writer.relativePath + "objects-index.html", selected);
+    	printMenuItem("Data objects", writer.path + "objects-index.html", selected);
     }
-    printMenuItem("Root resource", writer.relativePath + "index.html", selected);
+    printMenuItem("Root resource", writer.path + "index.html", selected);
   }
 
   protected final void printPrelude(final String title, final String selected) {

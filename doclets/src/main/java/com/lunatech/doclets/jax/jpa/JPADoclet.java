@@ -19,11 +19,6 @@
  */
 package com.lunatech.doclets.jax.jpa;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.Entity;
-
 import com.lunatech.doclets.jax.JAXDoclet;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jpa.model.JPAClass;
@@ -41,6 +36,11 @@ import com.sun.javadoc.Type;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 import com.sun.tools.doclets.formats.html.HtmlDoclet;
 import com.sun.tools.doclets.internal.toolkit.AbstractDoclet;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import javax.persistence.Entity;
 
 public class JPADoclet extends JAXDoclet<JPAConfiguration> {
 
@@ -78,7 +78,7 @@ public class JPADoclet extends JAXDoclet<JPAConfiguration> {
 
   private Registry registry = new Registry();
 
-  public JPADoclet(RootDoc rootDoc) {
+  public JPADoclet(RootDoc rootDoc) throws Configuration.Fault {
     super(rootDoc);
   }
 
@@ -87,12 +87,12 @@ public class JPADoclet extends JAXDoclet<JPAConfiguration> {
     return new JPAConfiguration(configuration);
   }
 
-  public static boolean start(final RootDoc rootDoc) {
+  public static boolean start(final RootDoc rootDoc) throws Configuration.Fault, IOException {
     new JPADoclet(rootDoc).start();
     return true;
   }
 
-  private void start() {
+  private void start() throws IOException {
     final ClassDoc[] classes = conf.parentConfiguration.root.classes();
     for (final ClassDoc klass : classes) {
       if (Utils.findAnnotatedClass(klass, jpaAnnotations) != null) {

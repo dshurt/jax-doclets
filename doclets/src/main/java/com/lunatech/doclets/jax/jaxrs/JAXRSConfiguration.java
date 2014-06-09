@@ -1,12 +1,12 @@
 package com.lunatech.doclets.jax.jaxrs;
 
-import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.sun.tools.doclets.formats.html.ConfigurationImpl;
+import com.sun.tools.doclets.internal.toolkit.Configuration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class JAXRSConfiguration extends JAXConfiguration {
 
@@ -28,7 +28,7 @@ public class JAXRSConfiguration extends JAXConfiguration {
     super(conf);
   }
 
-  public void setOptions() {
+  public void setOptions() throws Configuration.Fault {
     super.setOptions();
     String[][] options = parentConfiguration.root.options();
     jaxrscontext = Utils.getOption(options, "-jaxrscontext");

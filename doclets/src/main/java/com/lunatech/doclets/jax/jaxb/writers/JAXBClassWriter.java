@@ -18,9 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxb.writers;
 
-import java.io.IOException;
-import java.util.Collection;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxb.JAXBConfiguration;
@@ -34,6 +31,10 @@ import com.lunatech.doclets.jax.jaxb.model.Node;
 import com.lunatech.doclets.jax.jaxb.model.Value;
 import com.sun.javadoc.Doc;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
+import java.util.Collection;
 
 public class JAXBClassWriter extends DocletWriter {
 
@@ -45,14 +46,13 @@ public class JAXBClassWriter extends DocletWriter {
 
   private static HtmlDocletWriter getWriter(JAXConfiguration configuration, JAXBClass jaxbClass) {
     try {
-      return new HtmlDocletWriter(configuration.parentConfiguration, Utils.classToPath(jaxbClass), jaxbClass.getShortClassName() + ".html",
-          Utils.classToRoot(jaxbClass));
+      return new HtmlDocletWriter(configuration.parentConfiguration, DocPath.create(Utils.classToPath(jaxbClass)));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void write() {
+  public void write() throws IOException {
     printHeader();
     printMenu("");
     printSummary();
@@ -62,7 +62,7 @@ public class JAXBClassWriter extends DocletWriter {
     tag("hr");
     printMenu("");
     printFooter();
-    writer.flush();
+    //writer.flush();
     writer.close();
   }
 
@@ -132,8 +132,10 @@ public class JAXBClassWriter extends DocletWriter {
       }
       open("td");
       Doc javaDoc = member.getJavaDoc();
-      if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-        writer.printSummaryComment(javaDoc);
+      if (javaDoc != null && javaDoc.firstSentenceTags() != null){
+		  //writer.printSummaryComment(javaDoc);
+      }
+        
       close("td");
       close("tr");
 
@@ -190,7 +192,7 @@ public class JAXBClassWriter extends DocletWriter {
     close("h2");
     Doc javaDoc = jaxbClass.getJavaDoc();
     if (javaDoc != null && javaDoc.tags() != null) {
-      writer.printInlineComment(javaDoc);
+      writer.addInlineComment(javaDoc, new ContentBuilder());	  
     }
     if(getJAXBConfiguration().enableXMLExample
         || getJAXBConfiguration().enableJSONExample){
@@ -324,7 +326,7 @@ public class JAXBClassWriter extends DocletWriter {
   @Override
   protected void printTopMenu(String selected) {
     open("table", "tbody", "tr");
-    printMenuItem("Overview", writer.relativePath + "index.html", selected);
+    printMenuItem("Overview", writer.path + "index.html", selected);
     printOtherMenuItems(selected);
     close("tr", "tbody", "table");
   }

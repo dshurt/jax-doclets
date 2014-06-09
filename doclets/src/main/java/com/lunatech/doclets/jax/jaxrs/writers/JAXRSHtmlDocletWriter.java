@@ -1,20 +1,20 @@
 package com.lunatech.doclets.jax.jaxrs.writers;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxrs.model.JAXRSApplication;
 import com.lunatech.doclets.jax.jaxrs.model.Resource;
 import com.lunatech.doclets.jax.jaxrs.model.ResourceMethod;
 import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
 import com.sun.javadoc.MemberDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.SeeTag;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.StringContent;
+import com.sun.tools.doclets.internal.toolkit.Content;
+import com.sun.tools.doclets.internal.toolkit.util.DocPath;
+import java.io.IOException;
+import java.util.List;
 
 public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
 
@@ -22,7 +22,7 @@ public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
   private JAXConfiguration config;
 
   public JAXRSHtmlDocletWriter(JAXRSApplication application, JAXConfiguration config, String s, String s1, String s2) throws IOException {
-    super(config.parentConfiguration, s, s1, s2);
+    super(config.parentConfiguration, DocPath.create(s1));
     this.application = application;
     this.config = config;
   }
@@ -32,7 +32,7 @@ public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
    * the standard page location conventions, so the default works for them.
    */
   @Override
-  public String seeTagToString(SeeTag tag) {
+  public Content seeTagToContent(SeeTag tag) {
     Resource res = null;
     String linkText = null;
     String hash = null;
@@ -42,7 +42,7 @@ public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
 
       if (cDoc == null) {
         // JavaDoc was unable to locate the DTO/resource class
-        return invalidLink(tag, String.format("can't find referenced class %s", tag.referencedClassName()));
+        return new StringContent(invalidLink(tag, String.format("can't find referenced class %s", tag.referencedClassName())));
       }
 
       // Check for a resource class first
@@ -56,7 +56,7 @@ public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
         MemberDoc member = tag.referencedMember();
         if (member == null) {
           // No point looking if JavaDoc can't find the member
-          return invalidLink(tag, String.format("can't find resource method %s in %s", tag.referencedMemberName(), cDoc.qualifiedName()));
+          return new StringContent(invalidLink(tag, String.format("can't find resource method %s in %s", tag.referencedMemberName(), cDoc.qualifiedName())));
         }
 
         if (member instanceof MethodDoc) {
@@ -82,19 +82,19 @@ public class JAXRSHtmlDocletWriter extends HtmlDocletWriter {
       } else {
         linkTitle = "";
       }
-      String path = Utils.urlToPath(res);
-      if (path.length() == 0) {
-        path = ".";
+      String pathLocal = Utils.urlToPath(res);
+      if (pathLocal.length() == 0) {
+        pathLocal = ".";
       }
 
-      String link = relativePath + path + "/index.html";
+      String link = this.path + pathLocal + "/index.html";
       if (hash != null) {
         link += "#" + hash;
       }
-      return String.format("<tt><a href='%s' title='%s'>%s</a></tt>", link, linkTitle, linkText);
+      return new StringContent(String.format("<tt><a href='%s' title='%s'>%s</a></tt>", link, linkTitle, linkText));
     }
     // Fall back to looking for DTO types/members or linked objects using standard mechanism.
-    return super.seeTagToString(tag);
+    return super.seeTagToContent(tag);
   }
 
   private String getDisplayText(Resource resource, ResourceMethod rMethod) {

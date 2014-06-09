@@ -18,10 +18,6 @@
  */
 package com.lunatech.doclets.jax.jaxrs.writers;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import com.lunatech.doclets.jax.JAXConfiguration;
 import com.lunatech.doclets.jax.Utils;
 import com.lunatech.doclets.jax.jaxrs.JAXRSDoclet;
@@ -32,6 +28,10 @@ import com.lunatech.doclets.jax.jaxrs.model.Resource;
 import com.lunatech.doclets.jax.jaxrs.model.ResourceMethod;
 import com.sun.javadoc.Doc;
 import com.sun.tools.doclets.formats.html.HtmlDocletWriter;
+import com.sun.tools.doclets.formats.html.markup.ContentBuilder;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class ResourceWriter extends DocletWriter {
 
@@ -64,7 +64,7 @@ public class ResourceWriter extends DocletWriter {
     }
     tag("hr");
     printPostlude(selected);
-    writer.flush();
+    //writer.flush();
   }
 
   private void printMethodOverview(List<ResourceMethod> methods) {
@@ -94,7 +94,7 @@ public class ResourceWriter extends DocletWriter {
         open("td");
         Doc javaDoc = method.getJavaDoc();
         if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-          writer.printSummaryComment(javaDoc);
+          writer.addSummaryComment(javaDoc, new ContentBuilder());
         close("td");
         close("tr");
       }
@@ -149,7 +149,7 @@ public class ResourceWriter extends DocletWriter {
         String realPath = realSubResource.getName();
         around("a href='" + realPath + "/index.html'", realPath);
         tag("br");
-        print(" ↳ ");
+        print(" â†³ ");
         open("span class='deep-resource'");
         around("a href='" + path + "/index.html'", path);
         close("span");
@@ -160,7 +160,7 @@ public class ResourceWriter extends DocletWriter {
       open("td");
       Doc javaDoc = subResource.getJavaDoc();
       if (javaDoc != null && javaDoc.firstSentenceTags() != null)
-        writer.printSummaryComment(javaDoc);
+        writer.addSummaryComment(javaDoc, new ContentBuilder());
       close("td");
       close("tr");
     }
@@ -218,7 +218,7 @@ public class ResourceWriter extends DocletWriter {
     open("div class='doc-comment'");
     Doc javaDoc = this.resource.getJavaDoc();
     if (javaDoc != null && javaDoc.tags() != null) {
-      writer.printInlineComment(javaDoc);
+      writer.addInlineComment(javaDoc, new ContentBuilder());
     }
     close("div");
     do {
